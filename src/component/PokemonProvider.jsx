@@ -1,5 +1,3 @@
-// PokemonProvider.jsx
-
 import { createContext, useEffect, useState, useRef } from "react";
 import typeData from "./Typedata";
 
@@ -8,6 +6,8 @@ export const PokemonContext = createContext();
 export function PokemonProvider({ children }) {
    const [list, setList] = useState([]);
    const [offset, setOffset] = useState(0);
+   const [searchInfo, setSearchInfo] = useState("");
+
    const limit = 20;
    const isFetching = useRef(false); // 중복 호출 방지
 
@@ -27,6 +27,7 @@ export function PokemonProvider({ children }) {
                return await response.json();
             })
          );
+
          setList((prev) => [...prev, ...details]);
          setOffset((prev) => prev + limit);
       } catch (error) {
@@ -35,6 +36,20 @@ export function PokemonProvider({ children }) {
          isFetching.current = false;
       }
    }
+
+   // 검색어가 변경될 때마다 필터링
+   useEffect(() => {
+      if (searchInfo) {
+         const keyword = searchInfo.toLowerCase();
+         const filtered = list.filter((pokemon) =>
+            pokemon.name.toLowerCase().includes(keyword)
+         );
+         setList(filtered);
+      } else {
+         // 검색어가 없을 경우 전체 목록을 다시 보여줌
+         fetchPokemons(offset);
+      }
+   }, [searchInfo]);
 
    useEffect(() => {
       const observer = new IntersectionObserver((entries) => {
@@ -50,7 +65,7 @@ export function PokemonProvider({ children }) {
    }, [offset]);
 
    return (
-      <PokemonContext.Provider value={{ list, typeData }}>
+      <PokemonContext.Provider value={{ list, typeData, setSearchInfo, searchInfo }}>
          {children}
       </PokemonContext.Provider>
    );
