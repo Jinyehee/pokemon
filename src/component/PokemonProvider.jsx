@@ -11,6 +11,7 @@ export function PokemonProvider({ children }) {
    const limit = 20;
    const isFetching = useRef(false); // 중복 호출 방지
 
+   // 전체 포켓몬 데이터 가져오기
    async function fetchPokemons(offset) {
       if (isFetching.current) return;
       isFetching.current = true;
@@ -28,7 +29,7 @@ export function PokemonProvider({ children }) {
             })
          );
 
-         setList((prev) => [...prev, ...details]);
+         setList((prev) => [...prev, ...details]); 
          setOffset((prev) => prev + limit);
       } catch (error) {
          console.error(error);
@@ -37,7 +38,6 @@ export function PokemonProvider({ children }) {
       }
    }
 
-   // 검색어가 변경될 때마다 필터링
    useEffect(() => {
       if (searchInfo) {
          const keyword = searchInfo.toLowerCase();
@@ -46,14 +46,15 @@ export function PokemonProvider({ children }) {
          );
          setList(filtered);
       } else {
-         // 검색어가 없을 경우 전체 목록을 다시 보여줌
-         fetchPokemons(offset);
+         setList([]);  
+         setOffset(0);  
+         fetchPokemons(0); 
       }
    }, [searchInfo]);
 
    useEffect(() => {
       const observer = new IntersectionObserver((entries) => {
-         if (entries[0].isIntersecting) {
+         if (entries[0].isIntersecting && !searchInfo) {  
             fetchPokemons(offset);
          }
       });
@@ -62,7 +63,7 @@ export function PokemonProvider({ children }) {
       if (target) observer.observe(target);
 
       return () => observer.disconnect();
-   }, [offset]);
+   }, [offset, searchInfo]);  
 
    return (
       <PokemonContext.Provider value={{ list, typeData, setSearchInfo, searchInfo }}>
