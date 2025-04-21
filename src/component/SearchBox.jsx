@@ -2,10 +2,11 @@ import { useContext, useState } from "react";
 import { PokemonContext } from "./PokemonProvider";
 import searchIcon from "../assets/search.png";
 import Zback from "../assets/Zzz.png";
-
+import { ThemeContext } from "./ThemeProvider";
 
 export default function SearchBox() {
    const { setSearchInfo } = useContext(PokemonContext);
+   const { theme } = useContext(ThemeContext);
    const [inputValue, setInputValue] = useState("");
 
    const handleSearch = () => {
@@ -18,20 +19,28 @@ export default function SearchBox() {
       }
    };
    return (
-      <>
+      <div className="w-full relative">
          <img src={Zback} alt="" className="mx-auto pt-10" />
-         <div className="flex justify-center p-10 gap-2 -mt-90 ">
+
+         {theme === "dark" && (
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-gray-800 opacity-50 z-10" />
+         )}
+
+         <div className="flex justify-center p-10 gap-2 -mt-[90px] relative z-20">
             <input
                type="text"
                placeholder="원하는 포켓몬을 검색하세요."
-               className="border-3 border-yellow-300 px-4 py-2 rounded-4xl bg-white text-black focus:outline-none w-[400px]"
+               className="border-2 border-yellow-300 px-4 py-2 rounded-full bg-white text-black focus:outline-none w-[400px] dark:bg-gray-700 dark:text-white transition-all"
                onChange={(e) => setInputValue(e.target.value)}
-               onKeyDown={handleKeyDown} 
+               onKeyDown={handleKeyDown}
             />
-            <button className="p-3 rounded-4xl bg-yellow-300 hover:bg-yellow-400 transition" onClick={handleSearch}>
+            <button
+               className="p-3 rounded-full bg-yellow-300 hover:bg-yellow-400 transition"
+               onClick={handleSearch}
+            >
                <img className="w-6" src={searchIcon} alt="검색" />
             </button>
          </div>
-      </>
+      </div>
    );
 }

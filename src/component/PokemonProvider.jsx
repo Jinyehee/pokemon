@@ -5,13 +5,50 @@ export const PokemonContext = createContext();
 
 export function PokemonProvider({ children }) {
    const [list, setList] = useState([]);
+   const [allPokemons, setAllPokemons] = useState([]); // 전체 데이터 저장
    const [offset, setOffset] = useState(0);
    const [searchInfo, setSearchInfo] = useState("");
+   const [lang, setLang] = useState("ko");
+   const [modallist, setModallist] = useState({});
 
+   const modalRef = useRef(null);
    const limit = 20;
-   const isFetching = useRef(false); // 중복 호출 방지
+   const isFetching = useRef(false);
 
-   // 전체 포켓몬 데이터 가져오기
+   // 전체 데이터 한 번만 불러오기
+   async function loadAll() {
+      try {
+         const response = await fetch(
+            "https://pokeapi.co/api/v2/pokemon?limit=2000"
+         );
+         const data = await response.json();
+
+         const details = await Promise.all(
+            data.results.map(async (pokemon) => {
+               const response = await fetch(pokemon.url);
+               return await response.json();
+            })
+         );
+
+         const speciesData = await Promise.all(
+            details.map(async (pokemon) => {
+               const speciesResponse = await fetch(pokemon.species.url);
+               return await speciesResponse.json();
+            })
+         );
+
+         const merged = details.map((pokemon, idx) => ({
+            ...pokemon,
+            species: speciesData[idx], // species 통째로 붙여줌
+         }));
+
+         setAllPokemons(merged);
+      } catch (error) {
+         console.error(error);
+      }
+   }
+
+   // 무한 스크롤용 포켓몬 가져오기
    async function fetchPokemons(offset) {
       if (isFetching.current) return;
       isFetching.current = true;
@@ -29,7 +66,20 @@ export function PokemonProvider({ children }) {
             })
          );
 
-         setList((prev) => [...prev, ...details]); 
+         // 포켓몬 종류 (species) 데이터 추가
+         const speciesData = await Promise.all(
+            details.map(async (pokemon) => {
+               const speciesResponse = await fetch(pokemon.species.url);
+               return await speciesResponse.json();
+            })
+         );
+
+         const merged = details.map((pokemon, idx) => ({
+            ...pokemon,
+            species: speciesData[idx], // species 통째로 붙여줌
+         }));
+
+         setList((prev) => [...prev, ...merged]);
          setOffset((prev) => prev + limit);
       } catch (error) {
          console.error(error);
@@ -39,22 +89,39 @@ export function PokemonProvider({ children }) {
    }
 
    useEffect(() => {
-      if (searchInfo) {
-         const keyword = searchInfo.toLowerCase();
-         const filtered = list.filter((pokemon) =>
-            pokemon.name.toLowerCase().includes(keyword)
-         );
-         setList(filtered);
-      } else {
-         setList([]);  
-         setOffset(0);  
-         fetchPokemons(0); 
+      if (searchInfo && allPokemons.length === 0) {
+         loadAll(); // 검색할 때만 전체 포켓몬을 불러오기
       }
    }, [searchInfo]);
+   // 검색어가 바뀌었을 때 필터링
+   useEffect(() => {
+      if (searchInfo) {
+         const keyword = searchInfo.toLowerCase();
 
+         const filtered = allPokemons.filter((pokemon) => {
+            const engName = pokemon.name.toLowerCase();
+            const korName =
+               pokemon.species?.names?.find((n) => n.language.name === "ko")
+                  ?.name || "";
+
+            return (
+               engName.includes(keyword) ||
+               korName.toLowerCase().includes(keyword)
+            );
+         });
+
+         setList(filtered);
+      } else {
+         setList([]); // 검색 해제 시 초기화
+         setOffset(0);
+         fetchPokemons(0);
+      }
+   }, [searchInfo, allPokemons, lang]);
+
+   // 무한스크롤 Intersection Observer
    useEffect(() => {
       const observer = new IntersectionObserver((entries) => {
-         if (entries[0].isIntersecting && !searchInfo) {  
+         if (entries[0].isIntersecting && !searchInfo) {
             fetchPokemons(offset);
          }
       });
@@ -63,10 +130,22 @@ export function PokemonProvider({ children }) {
       if (target) observer.observe(target);
 
       return () => observer.disconnect();
-   }, [offset, searchInfo]);  
+   }, [offset, searchInfo]);
 
    return (
-      <PokemonContext.Provider value={{ list, typeData, setSearchInfo, searchInfo }}>
+      <PokemonContext.Provider
+         value={{
+            list,
+            typeData,
+            setSearchInfo,
+            searchInfo,
+            lang,
+            setLang,
+            modalRef,
+            modallist,
+            setModallist,
+         }}
+      >
          {children}
       </PokemonContext.Provider>
    );
