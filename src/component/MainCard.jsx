@@ -49,7 +49,7 @@ export default function MainCard({ pokemon }) {
                   return (
                      <span
                         key={index}
-                        className="flex items-center gap-1 sm:gap-2 text-white text-[8px] px-1 py-0.5 sm:px-2 sm:py-1 rounded"
+                        className="flex items-center gap-1 sm:gap-2 text-white text-[8px] px-1 py-0.5 sm:px-2 sm:py-1 sm:text-xl rounded"
                         style={{ backgroundColor: type?.color }}
                      >
                         <img
