@@ -17,7 +17,7 @@ export default function Modal() {
    return (
       <dialog
          ref={modalRef}
-         className="rounded-2xl p-8 border-y-30 border-blue-300 bg-white dark:bg-gray-800  dark:text-white shadow-2xl w-[95%] max-w-2xl text-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0"
+         className="rounded-2xl p-8 border-y-30 border-blue-300 bg-white dark:bg-gray-800  dark:text-white shadow-2xl w-[70%] md:w-[95%] max-w-2xl text-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0"
       >
          <button
             onClick={() => {
@@ -31,7 +31,7 @@ export default function Modal() {
 
          <div className="flex justify-center gap-6 mb-6">
             {/* 기본 이미지 */}
-            <div className="relative w-40 h-40">
+            <div className="relative w-30 h-30 md:w-40 md:h-40">
                <img
                   src={normalImg}
                   alt="기본"
@@ -43,7 +43,7 @@ export default function Modal() {
             </div>
 
             {/* 이로치 이미지 */}
-            <div className="relative w-40 h-40">
+            <div className="relative w-30 h-30 md:w-40 md:h-40">
                <img
                   src={shinyImg}
                   alt="이로치"
@@ -73,7 +73,7 @@ export default function Modal() {
             })}
          </div>
 
-         <h2 className="text-2xl font-bold mb-2">
+         <h2 className="text-xl md:text-2xl font-bold mb-2">
             #{modallist.id} {translatedName}
          </h2>
 
@@ -86,7 +86,7 @@ export default function Modal() {
             </p>
          </div>
 
-         <p className="text-base text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
+         <p className="text-sm md:text-base text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
             {(lang === "ko"
                ? modallist.species?.flavor_text_entries?.find(
                     (entry) => entry.language.name === "ko"

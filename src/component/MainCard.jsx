@@ -20,7 +20,7 @@ export default function MainCard({ pokemon }) {
    return (
       <>
          <li
-            className="border-3 border-blue-300 rounded-2xl p-5 w-60 h-60 sm:w-70 sm:h-70 text-center flex justify-between flex-col bg-white 
+            className="border-3 border-blue-300 rounded-2xl p-5 w-50 h-50 sm:w-70 sm:h-70 text-center flex justify-between flex-col bg-white 
                transition-all duration-300 hover:shadow-lg hover:-translate-y-2 dark:bg-gray-600 dark:text-white"
             onClick={clickModal}
          >
