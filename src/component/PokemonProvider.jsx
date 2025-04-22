@@ -15,6 +15,43 @@ export function PokemonProvider({ children }) {
    const limit = 20;
    const isFetching = useRef(false);
 
+   // 전체 데이터 한 번만 불러오기
+   async function loadAll() {
+      try {
+         const response = await fetch(
+            "https://pokeapi.co/api/v2/pokemon?limit=2000"
+         );
+         const data = await response.json();
+
+         const details = await Promise.all(
+            data.results.map(async (pokemon) => {
+               const response = await fetch(pokemon.url);
+               return await response.json();
+            })
+         );
+
+         const speciesData = await Promise.all(
+            details.map(async (pokemon) => {
+               const speciesResponse = await fetch(pokemon.species.url);
+               return await speciesResponse.json();
+            })
+         );
+
+         const merged = details.map((pokemon, idx) => ({
+            ...pokemon,
+            species: speciesData[idx], // species 통째로 붙여줌
+         }));
+
+         setAllPokemons(merged);
+      } catch (error) {
+         console.error(error);
+      }
+   }
+
+   useEffect(() => {
+      loadAll();
+   }, []);
+
    // 무한 스크롤용 포켓몬 가져오기
    async function fetchPokemons(offset) {
       if (isFetching.current) return;
@@ -93,42 +130,6 @@ export function PokemonProvider({ children }) {
          fetchPokemons(0);
       }
    }, [searchInfo]);
-
-   // 전체 데이터 한 번만 불러오기
-   useEffect(() => {
-      async function loadAll() {
-         try {
-            const response = await fetch(
-               "https://pokeapi.co/api/v2/pokemon?limit=2000"
-            );
-            const data = await response.json();
-
-            const details = await Promise.all(
-               data.results.map(async (pokemon) => {
-                  const response = await fetch(pokemon.url);
-                  return await response.json();
-               })
-            );
-
-            const speciesData = await Promise.all(
-               details.map(async (pokemon) => {
-                  const speciesResponse = await fetch(pokemon.species.url);
-                  return await speciesResponse.json();
-               })
-            );
-
-            const merged = details.map((pokemon, idx) => ({
-               ...pokemon,
-               species: speciesData[idx], // species 통째로 붙여줌
-            }));
-
-            setAllPokemons(merged);
-         } catch (error) {
-            console.error(error);
-         }
-      }
-      loadAll();
-   }, []);
 
    return (
       <PokemonContext.Provider
