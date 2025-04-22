@@ -7,7 +7,7 @@ import { ThemeProvider } from "./component/ThemeProvider";
 function App() {
    return (
       <ThemeProvider>
-         <div className="bg-gray-50 min-h-screen bg-[url('./assets/bg_repeat.png')] bg-center dark:bg-gray-800 transition-all">
+         <div className="bg-gray-50 min-h-screen bg-[url('./assets/bg_repeat.png')] bg-repeat dark:bg-gray-800 transition-all">
             <PokemonProvider>
                <Header />
                <SearchBox />

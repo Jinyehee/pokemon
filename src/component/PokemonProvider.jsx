@@ -10,6 +10,7 @@ export function PokemonProvider({ children }) {
    const [searchInfo, setSearchInfo] = useState("");
    const [lang, setLang] = useState("ko");
    const [modallist, setModallist] = useState({});
+   const [isAllLoading, setIsAllLoading] = useState(true);
 
    const modalRef = useRef(null);
    const limit = 20;
@@ -45,6 +46,8 @@ export function PokemonProvider({ children }) {
          setAllPokemons(merged);
       } catch (error) {
          console.error(error);
+      } finally {
+         setIsAllLoading(false);
       }
    }
 
@@ -143,6 +146,7 @@ export function PokemonProvider({ children }) {
             modalRef,
             modallist,
             setModallist,
+            isAllLoading,
          }}
       >
          {children}
