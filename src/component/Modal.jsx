@@ -17,7 +17,7 @@ export default function Modal() {
    return (
       <dialog
          ref={modalRef}
-         className="rounded-2xl p-8 border-y-30 border-blue-300 bg-white dark:bg-gray-800  dark:text-white shadow-2xl w-[70%] md:w-[95%] max-w-2xl text-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0"
+         className="rounded-2xl p-8 border-y-30 border-blue-300 bg-white dark:bg-gray-800  dark:text-white shadow-2xl w-[80%] md:w-[95%] max-w-2xl text-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0"
       >
          <button
             onClick={() => {

@@ -20,24 +20,24 @@ export default function MainCard({ pokemon }) {
    return (
       <>
          <li
-            className="border-3 border-blue-300 rounded-2xl p-5 w-50 h-50 sm:w-70 sm:h-70 text-center flex justify-between flex-col bg-white 
+            className="border-3 border-blue-300 rounded-2xl p-5 w-40 h-40 sm:w-70 sm:h-70 text-center flex justify-between flex-col bg-white 
                transition-all duration-300 hover:shadow-lg hover:-translate-y-2 dark:bg-gray-600 dark:text-white"
             onClick={clickModal}
          >
-            <p className="text-l sm:text-xl">No. {pokemon.id}</p>
+            <p className="text-sm sm:text-xl">No. {pokemon.id}</p>
 
-            <div className="h-[60px] sm:h-[100px] flex items-center">
+            <div className="h-[40px] sm:h-[100px] flex items-center">
                <img
                   src={
                      pokemon.sprites?.other?.showdown?.front_default ||
                      pokemon.sprites?.front_default
                   }
                   alt={translatedName}
-                  className="mx-auto max-h-[60px] sm:max-h-[100px] object-contain"
+                  className="mx-auto max-h-[40px] sm:max-h-[100px] object-contain"
                />
             </div>
 
-            <p className="font-bold capitalize text-xl sm:text-2xl">
+            <p className="font-bold capitalize text-l sm:text-2xl">
                {translatedName}
             </p>
 
@@ -49,13 +49,13 @@ export default function MainCard({ pokemon }) {
                   return (
                      <span
                         key={index}
-                        className="flex items-center gap-2 text-white px-2 py-1 rounded"
+                        className="flex items-center gap-1 sm:gap-2 text-white text-[10px] px-1 py-0.5 sm:px-2 sm:py-1 rounded"
                         style={{ backgroundColor: type?.color }}
                      >
                         <img
                            src={type?.icon}
                            alt={typeName}
-                           className="w-4 h-4"
+                           className="w-3 h-3 sm:w-4 sm:h-4"
                         />
                         {type?.[lang] || typeName}
                      </span>
