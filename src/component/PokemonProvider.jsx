@@ -138,6 +138,7 @@ export function PokemonProvider({ children }) {
       <PokemonContext.Provider
          value={{
             list,
+            setList,
             typeData,
             setSearchInfo,
             searchInfo,

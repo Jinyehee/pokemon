@@ -5,11 +5,12 @@ import Zback from "../assets/Zzz.png";
 import { ThemeContext } from "./ThemeProvider";
 
 export default function SearchBox() {
-   const { setSearchInfo, isAllLoading } = useContext(PokemonContext);
+   const { setSearchInfo, isAllLoading, setList } = useContext(PokemonContext);
    const { theme } = useContext(ThemeContext);
    const [inputValue, setInputValue] = useState("");
 
    const handleSearch = () => {
+      setList([]);
       setSearchInfo(inputValue);
    };
 
