@@ -20,24 +20,26 @@ export default function MainCard({ pokemon }) {
    return (
       <>
          <li
-            className="border-3 border-blue-300 rounded-2xl p-5 w-70 h-70 text-center flex justify-between flex-col bg-white 
+            className="border-3 border-blue-300 rounded-2xl p-5 w-60 h-60 sm:w-70 sm:h-70 text-center flex justify-between flex-col bg-white 
                transition-all duration-300 hover:shadow-lg hover:-translate-y-2 dark:bg-gray-600 dark:text-white"
             onClick={clickModal}
          >
-            <p className="text-xl">No. {pokemon.id}</p>
+            <p className="text-l sm:text-xl">No. {pokemon.id}</p>
 
-            <div className="h-[100px] flex items-center">
+            <div className="h-[60px] sm:h-[100px] flex items-center">
                <img
                   src={
                      pokemon.sprites?.other?.showdown?.front_default ||
                      pokemon.sprites?.front_default
                   }
                   alt={translatedName}
-                  className="mx-auto max-h-[100px] object-contain"
+                  className="mx-auto max-h-[60px] sm:max-h-[100px] object-contain"
                />
             </div>
 
-            <p className="font-bold capitalize text-2xl">{translatedName}</p>
+            <p className="font-bold capitalize text-xl sm:text-2xl">
+               {translatedName}
+            </p>
 
             <div className="flex justify-center gap-5">
                {pokemon.types.map((typeObj, index) => {

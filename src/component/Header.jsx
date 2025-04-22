@@ -18,25 +18,25 @@ export default function Header() {
    return (
       <header className="flex items-center p-6 shadow-md shadow-gray-300 bg-white fixed w-full z-100 dark:bg-gray-500 dark:shadow-gray-600 transition-all">
          <div className="absolute left-1/2 transform -translate-x-1/2">
-            <img src={mainLogo} alt="로고" className="h-20" />
+            <img src={mainLogo} alt="로고" className="h-15 md:h-20" />
          </div>
          <div className="flex items-center space-x-4 ml-auto">
             <button
-               className="px-2 py-2 rounded-4xl bg-gray-600"
+               className="p-1 md:p-2 rounded-4xl bg-gray-600"
                onClick={changeTheme}
             >
                <img
-                  className="w-7"
+                  className="w-5 md:w-7"
                   src={theme === "light" ? light : dark}
                   alt="모드"
                />
             </button>
             <button
-               className="px-2 py-2 rounded-4xl bg-gray-600"
+               className="p-1 md:p-2 rounded-4xl bg-gray-600"
                onClick={toggleLang}
             >
                <img
-                  className="w-7"
+                  className="w-5 md:w-7"
                   src={lang === "ko" ? krIcon : enIcon}
                   alt="언어"
                />
