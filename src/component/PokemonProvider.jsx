@@ -1,20 +1,84 @@
 import { createContext, useEffect, useState, useRef } from "react";
 import typeData from "./Typedata";
-
 export const PokemonContext = createContext();
 
 export function PokemonProvider({ children }) {
-   const [list, setList] = useState([]);
+   const [list, setList] = useState([]); // 현재 보여지는 포켓몬 목록
    const [allPokemons, setAllPokemons] = useState([]); // 전체 데이터 저장
-   const [offset, setOffset] = useState(0);
-   const [searchInfo, setSearchInfo] = useState("");
+   const [offset, setOffset] = useState(0); // 현재까지 보여준 포켓몬 수
+   const [searchInfo, setSearchInfo] = useState(""); // 검색어
    const [lang, setLang] = useState("ko");
    const [modallist, setModallist] = useState({});
-   const [isAllLoading, setIsAllLoading] = useState(true);
+   const [isFiltering, setIsFiltering] = useState(false); // 검색 중 상태
 
    const modalRef = useRef(null);
    const limit = 20;
    const isFetching = useRef(false);
+
+   // 전체 데이터 한 번만 불러오기 (첫 검색 시)
+   useEffect(() => {
+      async function loadAll() {
+         try {
+            setIsFiltering(true);
+            const response = await fetch(
+               "https://pokeapi.co/api/v2/pokemon?limit=2000"
+            );
+            const data = await response.json();
+
+            const details = await Promise.all(
+               data.results.map(async (pokemon) => {
+                  const response = await fetch(pokemon.url);
+                  return await response.json();
+               })
+            );
+
+            const speciesData = await Promise.all(
+               details.map(async (pokemon) => {
+                  const speciesResponse = await fetch(pokemon.species.url);
+                  return await speciesResponse.json();
+               })
+            );
+
+            const merged = details.map((pokemon, idx) => ({
+               ...pokemon,
+               species: speciesData[idx], // species 통째로 붙여줌
+            }));
+
+            setAllPokemons(merged);
+         } catch (error) {
+            console.error(error);
+         } finally {
+            setIsFiltering(false); // 검색 완료
+         }
+      }
+
+      if (searchInfo && allPokemons.length === 0) {
+         loadAll(); // 처음 검색할 때만 loadAll 호출
+      }
+   }, [searchInfo, allPokemons]);
+
+   useEffect(() => {
+      if (searchInfo) {
+         const keyword = searchInfo.toLowerCase();
+
+         const filtered = allPokemons.filter((pokemon) => {
+            const engName = pokemon.name.toLowerCase();
+            const korName =
+               pokemon.species?.names?.find((n) => n.language.name === "ko")
+                  ?.name || "";
+
+            return (
+               engName.includes(keyword) ||
+               korName.toLowerCase().includes(keyword)
+            );
+         });
+
+         setList(filtered);
+      } else {
+         setList([]);
+         setOffset(0);
+      }
+   }, [searchInfo, allPokemons]);
 
    // 무한 스크롤용 포켓몬 가져오기
    async function fetchPokemons(offset) {
@@ -70,70 +134,6 @@ export function PokemonProvider({ children }) {
       return () => observer.disconnect();
    }, [offset, searchInfo]);
 
-   // 전체 데이터 한 번만 불러오기
-
-   useEffect(() => {
-      async function loadAll() {
-         try {
-            const response = await fetch(
-               "https://pokeapi.co/api/v2/pokemon?limit=2000"
-            );
-            const data = await response.json();
-
-            const details = await Promise.all(
-               data.results.map(async (pokemon) => {
-                  const response = await fetch(pokemon.url);
-                  return await response.json();
-               })
-            );
-
-            const speciesData = await Promise.all(
-               details.map(async (pokemon) => {
-                  const speciesResponse = await fetch(pokemon.species.url);
-                  return await speciesResponse.json();
-               })
-            );
-
-            const merged = details.map((pokemon, idx) => ({
-               ...pokemon,
-               species: speciesData[idx], // species 통째로 붙여줌
-            }));
-
-            setAllPokemons(merged);
-         } catch (error) {
-            console.error(error);
-         } finally {
-            setIsAllLoading(false);
-         }
-      }
-      loadAll();
-   }, []);
-
-   // 검색어가 바뀌었을 때 필터링
-   useEffect(() => {
-      if (searchInfo) {
-         const keyword = searchInfo.toLowerCase();
-
-         const filtered = allPokemons.filter((pokemon) => {
-            const engName = pokemon.name.toLowerCase();
-            const korName =
-               pokemon.species?.names?.find((n) => n.language.name === "ko")
-                  ?.name || "";
-
-            return (
-               engName.includes(keyword) ||
-               korName.toLowerCase().includes(keyword)
-            );
-         });
-
-         setList(filtered);
-      } else {
-         setList([]);
-         setOffset(0);
-         fetchPokemons(0);
-      }
-   }, [searchInfo]);
-
    return (
       <PokemonContext.Provider
          value={{
@@ -146,7 +146,7 @@ export function PokemonProvider({ children }) {
             modalRef,
             modallist,
             setModallist,
-            isAllLoading,
+            isFiltering,
          }}
       >
          {children}

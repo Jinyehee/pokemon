@@ -5,7 +5,7 @@ import Zback from "../assets/Zzz.png";
 import { ThemeContext } from "./ThemeProvider";
 
 export default function SearchBox() {
-   const { setSearchInfo, isAllLoading } = useContext(PokemonContext);
+   const { setSearchInfo } = useContext(PokemonContext);
    const { theme } = useContext(ThemeContext);
    const [inputValue, setInputValue] = useState("");
 
@@ -30,8 +30,7 @@ export default function SearchBox() {
             <input
                type="text"
                placeholder="원하는 포켓몬을 검색하세요."
-               className="border-2 border-yellow-300 rounded-full bg-white text-black focus:outline-none dark:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed dark:text-white transition-all text-[12px] w-[300px] px-2 py-1 md:px-4 md:py-2 md:text-[16px] md:w-[400px] lg:w-[500px]"
-               disabled={isAllLoading}
+               className="border-2 border-yellow-300 rounded-full bg-white text-black focus:outline-none dark:bg-gray-700 disabled:bg-gray-400 dark:text-white transition-all text-[12px] w-[300px] px-2 py-1 md:px-4 md:py-2 md:text-[16px] md:w-[400px] lg:w-[500px]"
                onChange={(e) => setInputValue(e.target.value)}
                onKeyDown={handleKeyDown}
             />
