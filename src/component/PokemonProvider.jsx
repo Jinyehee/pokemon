@@ -71,47 +71,46 @@ export function PokemonProvider({ children }) {
    }, [offset, searchInfo]);
 
    // 전체 데이터 한 번만 불러오기
-   async function loadAll() {
-      try {
-         const response = await fetch(
-            "https://pokeapi.co/api/v2/pokemon?limit=2000"
-         );
-         const data = await response.json();
-
-         const details = await Promise.all(
-            data.results.map(async (pokemon) => {
-               const response = await fetch(pokemon.url);
-               return await response.json();
-            })
-         );
-
-         const speciesData = await Promise.all(
-            details.map(async (pokemon) => {
-               const speciesResponse = await fetch(pokemon.species.url);
-               return await speciesResponse.json();
-            })
-         );
-
-         const merged = details.map((pokemon, idx) => ({
-            ...pokemon,
-            species: speciesData[idx], // species 통째로 붙여줌
-         }));
-
-         setAllPokemons(merged);
-      } catch (error) {
-         console.error(error);
-      } finally {
-         setIsAllLoading(false);
-      }
-   }
 
    useEffect(() => {
+      async function loadAll() {
+         try {
+            const response = await fetch(
+               "https://pokeapi.co/api/v2/pokemon?limit=2000"
+            );
+            const data = await response.json();
+
+            const details = await Promise.all(
+               data.results.map(async (pokemon) => {
+                  const response = await fetch(pokemon.url);
+                  return await response.json();
+               })
+            );
+
+            const speciesData = await Promise.all(
+               details.map(async (pokemon) => {
+                  const speciesResponse = await fetch(pokemon.species.url);
+                  return await speciesResponse.json();
+               })
+            );
+
+            const merged = details.map((pokemon, idx) => ({
+               ...pokemon,
+               species: speciesData[idx], // species 통째로 붙여줌
+            }));
+
+            setAllPokemons(merged);
+         } catch (error) {
+            console.error(error);
+         } finally {
+            setIsAllLoading(false);
+         }
+      }
       loadAll();
    }, []);
 
    // 검색어가 바뀌었을 때 필터링
    useEffect(() => {
-      if (!allPokemons) loadAll();
       if (searchInfo) {
          const keyword = searchInfo.toLowerCase();
 

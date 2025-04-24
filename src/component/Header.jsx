@@ -6,6 +6,7 @@ import mainLogo from "../assets/main_logo.png";
 import dark from "../assets/darkmode.png";
 import light from "../assets/lightmode.png";
 import { ThemeContext } from "./ThemeProvider";
+import HeaderAction from "./HeaderAction";
 
 export default function Header() {
    const { lang, setLang } = useContext(PokemonContext);
@@ -16,11 +17,11 @@ export default function Header() {
    };
 
    return (
-      <header className="flex items-center p-6 shadow-md shadow-gray-300 bg-white fixed w-full z-100 dark:bg-gray-500 dark:shadow-gray-600 transition-all">
+      <header className="flex items-center justify-between p-6 shadow-md shadow-gray-300 bg-white fixed w-full z-100 dark:bg-gray-500 dark:shadow-gray-600 transition-all">
          <div className="absolute left-1/2 transform -translate-x-1/2">
             <img src={mainLogo} alt="로고" className="h-15 md:h-20" />
          </div>
-         <div className="flex items-center space-x-4 ml-auto">
+         <div className="flex items-center space-x-4">
             <button
                className="p-1 md:p-2 rounded-4xl bg-gray-600"
                onClick={changeTheme}
@@ -42,6 +43,7 @@ export default function Header() {
                />
             </button>
          </div>
+         <HeaderAction />
       </header>
    );
 }
