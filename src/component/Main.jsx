@@ -30,7 +30,11 @@ export default function Main() {
                         ) : (
                            <div>
                               <p>검색 결과가 없습니다.</p>
-                              <img src={searchNull} alt="검색 결과 없음" />
+                              <img
+                                 className="w-100"
+                                 src={searchNull}
+                                 alt="검색 결과 없음"
+                              />
                            </div>
                         )
                      ) : (
