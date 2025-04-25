@@ -5,6 +5,8 @@ import { auth } from "../data/firebase-config";
 
 export default function HeaderAction() {
    const [user, setUser] = useState(null);
+
+   // user 설정
    useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (curUser) => {
          setUser(curUser);
@@ -13,6 +15,7 @@ export default function HeaderAction() {
       return () => unsubscribe();
    }, []);
 
+   // 로그아웃
    const logout = () => {
       signOut(auth)
          .then(() => {

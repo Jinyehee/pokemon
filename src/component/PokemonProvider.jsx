@@ -7,7 +7,7 @@ export function PokemonProvider({ children }) {
    const [allPokemons, setAllPokemons] = useState([]); // 전체 데이터 저장
    const [offset, setOffset] = useState(0); // 현재까지 보여준 포켓몬 수
    const [searchInfo, setSearchInfo] = useState(""); // 검색어
-   const [lang, setLang] = useState("ko");
+   const [lang, setLang] = useState("ko"); // 언어
    const [modallist, setModallist] = useState({});
    const [isFiltering, setIsFiltering] = useState(false); // 검색 중 상태
 
@@ -19,32 +19,46 @@ export function PokemonProvider({ children }) {
    useEffect(() => {
       async function loadAll() {
          try {
+            // 검색중임을 알림
             setIsFiltering(true);
             const response = await fetch(
-               "https://pokeapi.co/api/v2/pokemon?limit=2000"
+               "https://pokeapi.co/api/v2/pokemon?limit=1500"
             );
             const data = await response.json();
 
-            const details = await Promise.all(
-               data.results.map(async (pokemon) => {
-                  const response = await fetch(pokemon.url);
-                  return await response.json();
-               })
-            );
+            // 데이터를 500개씩 나눠서 요청 (서버 터짐 방지)
+            const batchSize = 500;
+            const batches = Math.ceil(data.results.length / batchSize); // 나누었을때 결과가 소수점이 나오면 올림
+            const allDetails = []; // 데이터를 담을 변수
 
+            for (let i = 0; i < batches; i++) {
+               const batch = data.results.slice(
+                  i * batchSize,
+                  (i + 1) * batchSize
+               ); // (0~499) (500~999) 이런식으로 500개를 나눠서 요청
+               const batchDetails = await Promise.all(
+                  batch.map(async (pokemon) => {
+                     const response = await fetch(pokemon.url);
+                     return await response.json();
+                  })
+               );
+               allDetails.push(...batchDetails);
+            }
+
+            // species 데이터 추가
             const speciesData = await Promise.all(
-               details.map(async (pokemon) => {
+               allDetails.map(async (pokemon) => {
                   const speciesResponse = await fetch(pokemon.species.url);
                   return await speciesResponse.json();
                })
             );
 
-            const merged = details.map((pokemon, idx) => ({
+            const merged = allDetails.map((pokemon, idx) => ({
                ...pokemon,
                species: speciesData[idx], // species 통째로 붙여줌
             }));
 
-            setAllPokemons(merged);
+            setAllPokemons(merged); // allPokemons 배열에 담는다
          } catch (error) {
             console.error(error);
          } finally {
@@ -57,6 +71,7 @@ export function PokemonProvider({ children }) {
       }
    }, [searchInfo, allPokemons]);
 
+   // 검색 필터링
    useEffect(() => {
       if (searchInfo) {
          const keyword = searchInfo.toLowerCase();
@@ -66,10 +81,12 @@ export function PokemonProvider({ children }) {
             const korName =
                pokemon.species?.names?.find((n) => n.language.name === "ko")
                   ?.name || "";
+            const id = pokemon.id?.toString() || "";
 
             return (
                engName.includes(keyword) ||
-               korName.toLowerCase().includes(keyword)
+               korName.toLowerCase().includes(keyword) ||
+               id.includes(keyword)
             );
          });
 

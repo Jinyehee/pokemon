@@ -17,13 +17,13 @@ export default function Main() {
             <ul className="flex flex-wrap gap-10 justify-center">
                {list.length === 0 ? (
                   <div className="text-center text-gray-400">
-                     {isSearching ? (
+                     {isSearching ? ( // 검색어가 없을 경우
                         isFiltering ? (
                            <div>
                               <p>검색 중입니다...</p>
                               <img
                                  className="w-100"
-                                 src={searchLoading}
+                                 src={searchLoading} // isFiltering 이 true일때 이 화면을 띄운다
                                  alt="검색 중..."
                               />
                            </div>
@@ -39,7 +39,7 @@ export default function Main() {
                   </div>
                ) : (
                   list.map((pokemon, index) => (
-                     <MainCard key={index} pokemon={pokemon} />
+                     <MainCard key={index} pokemon={pokemon} /> // 포켓몬 리스트 출력
                   ))
                )}
             </ul>

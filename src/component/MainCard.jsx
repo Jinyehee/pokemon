@@ -4,6 +4,7 @@ import { PokemonContext } from "./PokemonProvider";
 export default function MainCard({ pokemon }) {
    const { typeData, lang, modalRef, setModallist } =
       useContext(PokemonContext);
+   // typeData - 포켓몬 타입, 아이콘, 색이 들어있는 데이터파일
 
    const clickModal = () => {
       if (modalRef.current) {
@@ -13,6 +14,7 @@ export default function MainCard({ pokemon }) {
    };
 
    // 포켓몬 이름 한글 가져오기
+   // lang에 입력되어있는 문자에 따라 이름 출력
    const translatedName =
       pokemon.species.names?.find((n) => n.language.name === lang)?.name ||
       pokemon.name;
@@ -31,7 +33,7 @@ export default function MainCard({ pokemon }) {
                   src={
                      pokemon.sprites?.other?.showdown?.front_default ||
                      pokemon.sprites?.front_default
-                  }
+                  } // 움직이는 gif가 없으면 default사진을 가져온다
                   alt={translatedName}
                   className="mx-auto max-h-[40px] sm:max-h-[100px] object-contain"
                />
@@ -43,6 +45,7 @@ export default function MainCard({ pokemon }) {
 
             <div className="flex justify-center gap-5">
                {pokemon.types.map((typeObj, index) => {
+                  // 포켓몬 타입 출력 (아이콘, 색깔, 한국어)
                   const typeName = typeObj.type.name;
                   const type = typeData[typeName];
 

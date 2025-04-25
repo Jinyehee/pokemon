@@ -12,6 +12,7 @@ export default function Header() {
    const { lang, setLang } = useContext(PokemonContext);
    const { theme, changeTheme } = useContext(ThemeContext);
 
+   // 언어 체인지
    const toggleLang = () => {
       setLang((prev) => (prev === "ko" ? "en" : "ko"));
    };
