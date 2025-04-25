@@ -29,7 +29,7 @@ export default function Header() {
             >
                <img
                   className="w-5 md:w-7"
-                  src={theme === "light" ? light : dark}
+                  src={theme === "light" ? dark : light}
                   alt="모드"
                />
             </button>
@@ -39,7 +39,7 @@ export default function Header() {
             >
                <img
                   className="w-5 md:w-7"
-                  src={lang === "ko" ? krIcon : enIcon}
+                  src={lang === "ko" ? enIcon : krIcon}
                   alt="언어"
                />
             </button>
