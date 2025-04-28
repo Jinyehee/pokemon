@@ -12,7 +12,7 @@ export function PokemonProvider({ children }) {
    const [isFiltering, setIsFiltering] = useState(false); // 검색 중 상태
 
    const modalRef = useRef(null);
-   const limit = 20;
+   let limit = 20;
    const isFetching = useRef(false);
 
    // 전체 데이터 한 번만 불러오기 (첫 검색 시)
@@ -94,6 +94,7 @@ export function PokemonProvider({ children }) {
       } else {
          setList([]);
          setOffset(0);
+         limit = 0;
       }
    }, [searchInfo, allPokemons]);
 
